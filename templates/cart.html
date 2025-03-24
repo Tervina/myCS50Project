@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block head %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock %}
+{% block content %}
+<h1 style="color: beige;">Your Cart</h1>
+
+{% if cart and cart|length > 0 %}
+<div style="display: flex; flex-direction: column; gap: 20px;">
+    
+
+    {% for item in cart %}
+        <div style="border: 1px solid beige; padding: 15px; border-radius: 10px; color: beige; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <strong>{{ item.product_name }}</strong><br>
+                ₹{{ item.price if item.price is not none else 0 }} | Quantity: {{ item.quantity }}
+            </div>
+            <div>
+                <form action="/update_quantity" method="POST" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="product_id" value="{{ item.product_id }}">
+                    <input type="hidden" name="action" value="increase">
+                    <button type="submit"
+                        style="margin-left: 10px;padding: 12px 18px; font-size: 20px; border-radius: 10px; background-color: #4CAF50; color: white; border: none;">+</button>
+                </form>
+                <form action="/update_quantity" method="POST" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="product_id" value="{{ item.product_id }}">
+                    <input type="hidden" name="action" value="decrease">
+                    <button type="submit"
+                        style="padding: 12px 18px; font-size: 20px; border-radius: 10px; background-color: #f0ad4e; color: white; border: none;">-</button>
+                </form>
+                <form action="/remove_from_cart" method="POST" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="product_id" value="{{ item.product_id }}">
+                    <button type="submit"
+                        style="margin-left: 10px; padding: 12px 18px; font-size: 20px; border-radius: 10px; background-color: #d9534f; color: white; border: none;">🗑️</button>
+                </form>
+            </div>
+        </div>
+    {% endfor %}  <!-- Make sure this closes the for loop -->
+
+</div>
+
+<h2 style="color: beige; margin-top: 20px;">Total Price:₹ {{ total_price }}</h2>
+
+<form action="/checkout" method="POST"
+    style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px; color: beige;">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="total_price" value="{{ total_price }}">
+
+    <label>Phone Number:</label>
+    <input type="text" name="phone" required placeholder="Enter your phone number"
+        style="padding: 10px; border-radius: 5px;">
+
+    <label>Email:</label>
+    <input type="email" name="email" required placeholder="Enter your email" style="padding: 10px; border-radius: 5px;">
+
+    <label>Address:</label>
+    <textarea name="address" required placeholder="Enter your address"
+        style="padding: 10px; border-radius: 5px;"></textarea>
+
+    <button type="submit"
+        style="padding: 12px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 10px; font-size: 18px; margin-top: 10px;">
+        Checkout
+    </button>
+</form>
+
+{% else %}
+<p style="color: beige;">Your cart is empty.</p>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+{% endblock %}

@@ -1,0 +1,16 @@
+form {
+    margin-top: 60px;
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 1);
+    width: 500px; /* Adjust as needed */
+    height: 580px;
+    text-align: center; /* Center text inside form */
+}
+input, button {
+width: 100%; 
+padding: 15px;
+margin: 10px 0;
+border-radius: 12px;
+font-size: 18px; /* Bigger text */
+}

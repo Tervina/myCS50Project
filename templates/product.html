@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product[1] }}{% endblock %}
+
+{% block head %}
+<meta name="csrf-token" content="{{ csrf_token() }}">  {# For JS Fetch to access CSRF token #}
+{% endblock %}
+
+{% block content %}
+<h1 style="color: beige;">{{ product[1] }}</h1>
+<br>
+
+<img src="{{ product[7] }}" alt="{{ product[1] }}" onerror="this.onerror=null; this.src='static/images/out_of_stock.png'">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<!-- FORM fallback for non-JS users -->
+<form id="add-to-cart-form" method="POST" action="/add_to_cart"style="display: inline;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="product_id" value="{{ product[0] }}">
+    <input type="hidden" name="product_name" value="{{ product[1] }}">
+    <input type="hidden" name="price" value="{{ product[3] }}">
+    <label>Quantity:
+        <input type="number"  id="quantity-input"  name="quantity" value="1" min="1">
+    </label>
+    <!-- <button onclick="addToCart('{{ product[0] }}', '{{ product[1] }}', '{{ product[3] }}', 1)" style="background-color: green; color: white; padding: 15px 30px; border: none; cursor: pointer; font-size: 25px;">
+        Add to Cart
+    </button> -->
+</form>
+
+<button onclick="addToCart('{{ product[0] }}', '{{ product[1] }}', '{{ product[3] }}')" style="background-color: green; color: white; padding: 15px 30px; border: none; cursor: pointer; font-size: 25px;">
+    Add to Cart
+</button> 
+
+<form action="/checkout" method="GET" style="display: inline;">
+    <button type="submit" style="background-color: blue; color: white; padding: 15px 30px; border: none; cursor: pointer; font-size: 25px;">
+        Checkout
+    </button>
+</form>
+
+<p style="color: beige;">Category: {{ product[2] }}</p>
+<p style="color: goldenrod;">Price: {{ product[3] }}</p>
+<p style="color: crimson;">Original Price: {{ product[4] }}</p>
+<p style="color: goldenrod;">Discount: {{ product[5] }}</p>
+<p style="color: crimson;">Rating: {{ product[6] }}/5</p>
+<p style="color: beige;">Description: {{ product[8] }}</p>
+<br>
+<a href="/home">Back to Home</a>
+
+{% endblock %}
+{% block scripts %}
+<script>
+async function addToCart(productId, productName, price) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const quantityInput = document.querySelector('#quantity-input');  // Get quantity input field
+    const quantity = parseInt(quantityInput.value) || 1;  // Get value, fallback to 1 if empty
+    const numericPrice = parseFloat(price.replace(/[^\d.]/g, ""));  // Clean price
+    console.log("📤 Sending raw price:", price);  // ✅ Check before sending
+    // const numericPrice = parseFloat(price);  
+
+    console.log("📤 Converted price before sending:", numericPrice);  // ✅ Check conversion
+
+
+    const productData = { product_id: productId, product_name: productName, price: numericPrice, quantity };
+
+    console.log("📤 Sending JSON Data:", JSON.stringify(productData));
+
+    try {
+        const response = await fetch("/add_to_cart", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-CSRFToken": csrfToken
+            },
+            body: JSON.stringify(productData)
+        });
+
+        const responseText = await response.text();
+        console.log("📥 Raw Response:", responseText);
+
+        try {
+            const responseData = JSON.parse(responseText);
+            console.log("📥 Parsed Response Data:", responseData);
+
+            if (response.ok) {
+                alert("✅ Added to cart successfully!");
+                window.location.href = "/cart";  // Redirect to cart page
+            } else {
+                alert("❌ Error: " + responseData.error);
+            }
+        } catch (parseError) {
+            console.error("🚨 JSON Parse Error:", parseError);
+            alert("Server returned an invalid response.");
+        }
+    } catch (error) {
+        console.error("🚨 Fetch Error:", error);
+        alert("Something went wrong. Check the console.");
+    }
+    
+
+}
+
+</script>
+{% endblock %}
+
+    
+    
+        

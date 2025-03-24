@@ -1,0 +1,62 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/static/login.css">    
+</head>
+<body style="background-color: #071e26;justify-content: center;align-items: center;display: flex; margin: 0px;height: 100vh;">
+ <div>
+    <form id="loginForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <p style="color: beige;font-size: 50px;font-weight: bold;margin: 0;">Login</p>
+
+        <input type="text" id="user_name" name="user_name"  placeholder="user_name"><br><br>
+        
+        <input type="password" id="password" name="password"  placeholder="Password"><br><br>
+        
+        <button type="submit">Login</button>
+        <a href="/forget-pass" class="forget-password">Forgot your password?</a>
+        <p style="color: beige;">Don't have an account? <a href="/register">Register here</a></p>
+
+
+    </form>
+ </div>   
+</body>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+    
+        const user_name = document.getElementById("user_name").value; 
+        const password = document.getElementById("password").value;
+        const csrf_token = document.querySelector("input[name='csrf_token']").value;  // Get CSRF token
+
+        const requestData = { user_name, password };  // Debugging: Log request data
+        console.log("Sending login data:", requestData);
+        try {
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: {
+                     "Content-Type": "application/json" ,
+                     "X-CSRFToken": csrf_token  // Send CSRF token in the header
+                    },
+                body: JSON.stringify(requestData)  // Send username instead of email
+            });
+    
+            const data = await response.json();
+            console.log("Login response:", data);  // Debugging: Log response
+            if (response.ok) {
+                window.location.href = "/home";  // Redirect to home page
+            } else {
+                document.getElementById("responseMessage").innerText = data.error;
+            }
+    
+        } catch (error) {
+            console.error("Error:", error);
+            document.getElementById("responseMessage").innerText = "An error occurred. Please try again.";
+        }
+    });
+    </script>
+    
+</html>

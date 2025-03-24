@@ -1,0 +1,27 @@
+form {
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 1);
+    width: 500px; /* Adjust as needed */
+    height: 300px;
+    text-align: center; /* Center text inside form */
+}
+input, button {
+/* width: 100%; Full width */
+padding: 15px;
+margin: 10px 0;
+border-radius: 12px;
+font-size: 18px; /* Bigger text */
+}
+.forgot-password {
+display: block; /* Makes it appear on a new line */
+text-align: right; /* Aligns it to the right */
+margin-top: 5px; /* Adds some space */
+font-size: 14px; /* Adjust font size */
+color: blue; /* Makes it blue */
+text-decoration: none; /* Removes underline */
+}
+
+.forgot-password:hover {
+text-decoration: underline; /* Adds underline when hovered */
+}

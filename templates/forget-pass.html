@@ -1,0 +1,46 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>forget-password</title>
+</head>
+<body style="background-color: #071e26;">
+    <p style="color: beige;font-size: 50px;font-weight: bold;">Reset Your Password</p>
+    <h1>Enter your email to reset your password.</h1>
+    
+    <form id="forgotPasswordForm">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="password">New Password:</label>
+        <input type="password" id="new_password" name="password" required>
+        <button type="submit">Reset Password</button>
+    </form>
+    <p id="responseMessage"></p>
+</body>
+<script>
+    document.getElementById("forgotPasswordForm").addEventListener("submit",async function(event){
+        event.preventDefault(); //prevent pagfe refresh
+        const email = document.getElementById("email").value;
+        const new_password = document.getElementById("new_password").value;
+
+        try{
+            const response = await fetch("/forget-pass",{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({email,new_password})
+            });
+            const data = await response.json();
+            document.getElementById("responseMessage").innerText = data.message || data.error;
+
+            if (response.ok){
+                alert("Password updated successfully! Redirecting to login...");
+                window.location.href = "/login";
+            }
+        }
+        catch(error){
+            console.error("Error:",error);
+            document.getElementById("responseMessage").innerText ="An error occurred. Please try again.";
+        }
+    });
+</script>
+</html>
