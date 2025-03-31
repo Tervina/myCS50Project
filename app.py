@@ -110,23 +110,68 @@ def reload(ws):
         ws.send('reload')
 
 # Route to insert user data
-@app.route('/register', methods=['GET','POST'])
+# @app.route('/register', methods=['GET','POST'])
+# def register():
+#     if request.method == 'GET':
+#         return render_template("register.html")
+#     try:
+#         data = request.get_json()  # Get JSON data from request
+#         print(data)
+#         if data is None:
+#             return jsonify({"error": "Invalid or missing JSON data"}), 400
+        
+#         user_name = data['user_name']
+#         email = data['email']
+#         password = data['password']
+#         # user_name = request.form['user_name']
+#         # email = request.form['email']
+#         # password = request.form['password']
+#         print(request.data)  # Check raw request data
+#         if not user_name or not email or not password:
+#             return jsonify({"error": "Missing required fields"}), 400
+        
+#         conn = sqlite3.connect("my_database.db")
+#         cursor = conn.cursor()
+#         cursor.execute("INSERT INTO user (user_name, email, password) VALUES (?, ?, ?)",
+#                        (user_name, email, password))
+#         conn.commit()
+#         conn.close()
+
+#         return jsonify({"message": "User registered successfully!"}), 201
+
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 400
+    
+    # return render_template('register.html')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
         return render_template("register.html")
+
     try:
-        data = request.json  # Get JSON data from request
-        user_name = data['user_name']
-        email = data['email']
-        password = data['password']  # 
+        print("Headers:", request.headers)  
+        print("Raw Data Received:", request.data)  # Debugging  
+
+        if not request.is_json:
+            return jsonify({"error": "Request must be JSON"}), 400
+
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Invalid or missing JSON data"}), 400
+
+        user_name = data.get('user_name')
+        # age = data.get('age', '')  # Default to empty if not provided
+        # address = data.get('address', '')  
+        email = data.get('email')
+        password = data.get('password')
 
         if not user_name or not email or not password:
             return jsonify({"error": "Missing required fields"}), 400
-        
+
         conn = sqlite3.connect("my_database.db")
         cursor = conn.cursor()
         cursor.execute("INSERT INTO user (user_name, email, password) VALUES (?, ?, ?)",
-                       (user_name, email, password))
+                       (user_name,email, password))
         conn.commit()
         conn.close()
 
@@ -134,8 +179,7 @@ def register():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-    
-    # return render_template('register.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
