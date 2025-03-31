@@ -31,3 +31,5 @@ Thumbs.db
 
 # Log files
 *.log
+# Open your .gitignore file and add:
+flask_session/
