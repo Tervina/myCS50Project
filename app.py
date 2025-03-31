@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for,g,flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_sock import Sock
+from flask_sock import Sock        #lets you use WebSockets to send and receive messages in real-time without refreshing the page
 from flask_session import Session  # Import session extension
 import sqlite3,json
 import random
