@@ -1,65 +1,62 @@
-E-Commerce Website
-Project Overview
+# E-Commerce Website
+
+## Project Overview
 
 This project is a fully functional e-commerce website built using Flask (Python) for the backend, along with HTML, CSS, and JavaScript for the frontend. The website allows users to browse products, add items to their cart, and proceed to checkout. The backend is connected to a product database to store and manage product information.
 
-Features
+## Features
 
-User authentication (sign-up, login, logout)
+- User authentication (sign-up, login, logout)
+- Product browsing and categorization
+- Shopping cart functionality
+- Checkout system
+- Product search functionality
+- Database integration for managing products and orders
+- Responsive design for mobile and desktop users
 
-Product browsing and categorization
+## Technologies Used
 
-Shopping cart functionality
+- **Backend**: Flask (Python)
+- **Frontend**: HTML, CSS, JavaScript
+- **Database**: SQL (e.g., SQLite, PostgreSQL, or MySQL)
+- **Frameworks/Libraries**: Flask, Jinja2 (for templating), SQLAlchemy (for database ORM)
 
-Checkout system
+## Installation
 
-Product search functionality
-
-Database integration for managing products and orders
-
-Responsive design for mobile and desktop users
-
-Technologies Used
-
-Backend: Flask (Python)
-
-Frontend: HTML, CSS, JavaScript
-
-Database: SQL (e.g., SQLite, PostgreSQL, or MySQL)
-
-Frameworks/Libraries: Flask, Jinja2 (for templating), SQLAlchemy (for database ORM)
-
-Installation
-
-Prerequisites
+### Prerequisites
 
 Make sure you have Python installed on your system.
 
-Steps to Set Up the Project
+### Steps to Set Up the Project
 
-Clone this repository:
+1. Clone this repository:
+   ```
+   git clone https://github.com/Tervina/ecommerce-flask.git
+   cd ecommerce-flask
+   ```
 
-git clone https://github.com/Tervina/ecommerce-flask.git
-cd ecommerce-flask
+2. Create a virtual environment and activate it:
+   ```
+   python -m venv myvenv
+   source myvenv/bin/activate  # On Windows: myvenv\Scripts\activate
+   ```
 
-Create a virtual environment and activate it:
+3. Install required dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
 
-python -m venv myvenv
-source myvenv/bin/activate  # On Windows: myvenv\Scripts\activate
-
-Install required dependencies:
-
-pip install -r requirements.txt
-
-Run the application:
-
-flask run
+4. Run the application:
+   ```
+   flask run
+   ```
 
 The website should now be accessible at http://127.0.0.1:5000/
 
-Project Structure
+## Project Structure
 
-/ ecommerce-flask
+```
+/ecommerce-flask
 │── /static          # CSS, JavaScript, images
 │   ├── images       # Product and UI images
 │   ├── login.css    # Login page styles
@@ -82,24 +79,23 @@ Project Structure
 │── myvenv               # Virtual environment
 │── requirements.txt     # Project dependencies
 │── README.md            # Project documentation
+```
 
-Future Improvements
+## Future Improvements
 
-Implement an order history feature
+- Implement an order history feature
+- Add payment gateway integration
+- Enhance UI/UX design
+- Optimize performance and security
 
-Add payment gateway integration
-
-Enhance UI/UX design
-
-Optimize performance and security
-
-Contributing
+## Contributing
 
 Contributions are welcome! Feel free to fork the repository and submit a pull request.
 
-License
+## License
 
 This project is open-source and available under the MIT License.
 
-Made with ❤️ by Tervina
+---
 
+Made with ❤️ by Tervina
