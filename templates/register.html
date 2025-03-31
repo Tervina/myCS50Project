@@ -8,6 +8,8 @@
 <body style="background-color: #071e26;justify-content: center;align-items: center;display: flex; margin: 0px;height: 100vh;">
     <div>
        <form id="registerForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
            <p style="color: beige;font-size: 50px;font-weight: bold;margin: 0;">Register</p>
 
            <input type="text" id="user_name" name="user_name"  placeholder="User Name"><br><br>  
@@ -29,14 +31,19 @@
 
     </div>   
    </body>
-   <script>
+   <!-- <script>
     document.getElementById("registerForm").addEventListener("submit",async function(event){
         event.preventDefault(); //prvent form refresh
 
         // Get form values
-        const user_name = document.getElementById("user_name").value;
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
+            // const user_name = document.getElementById("user_name").value;
+            // const email = document.getElementById("email").value;
+            // const password = document.getElementById("password").value;
+            const user_name = document.getElementById("user_name").value;
+            const age = document.getElementById("age").value;
+            const address = document.getElementById("address").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
 
         try {
         const response = await fetch("http://127.0.0.1:5000/register", {
@@ -65,5 +72,43 @@
     }
       
     });
+   </script> -->
+   <script>
+    document.getElementById("registerForm").addEventListener("submit", async function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const user_name = document.getElementById("user_name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const csrf_token = document.querySelector("input[name='csrf_token']").value;  // Get CSRF token
+
+    try {
+        const response = await fetch("/register", {  // Use relative URL
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrf_token  // ✅ Include CSRF Token
+            },
+            body: JSON.stringify({ user_name, email, password })  
+        });
+
+        // Check if response is JSON before parsing
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new Error("Server did not return JSON. Possible error page.");
+        }
+
+        const data = await response.json();
+        if (response.ok) {
+            window.location.href = "/login";  
+        } else {
+            document.getElementById("responseMessage").innerText = data.error || "Error occurred";
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        document.getElementById("responseMessage").innerText = "An error occurred. Please try again.";
+    }
+});
+
    </script>
 </html>
