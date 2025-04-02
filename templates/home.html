@@ -18,16 +18,16 @@
         <ul>
             <li><a href="/home">Home</a></li>
             <li><a href="/cart">Cart</a></li>
-            
-    
+
+
             <!-- <li style="float:right"><a class="active" href="#about">About</a></li> -->
-            <a href="{{ url_for('cart') }}" class="cart-icon">
-                <i class="fas fa-shopping-cart"></i> 
+            <a href="{{ url_for('cart.view_cart') }}" class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
                 <!-- <span id="cart-count">{{ session.get('cart_count', 0) }}</span> -->
             </a>
-            
+
             <li style="float:right"><a href="/logout">Logout</a></li>
-    
+
         </ul>
     </nav>
 
@@ -35,76 +35,76 @@
         <div>
             <p style="text-align: center;font-weight: bold;font-size: 50px;">Our Categories</p>
         </div>
-        
-    
-            <div class="container">
-                <div class="item">
-                    <div class="bg-div" onclick="window.location.href='/computer';"
+
+
+        <div class="container">
+            <div class="item">
+                <div class="bg-div" onclick="window.location.href='/computer';"
                     style="background-image: url('/static/images/computer-accessories.jpg');"></div>
-                    <p>Computers&Accessories</p>
-                </div>
-                
-                <div class="item">
-                    <div class="bg-div" onclick="window.location.href='/electronics';"
-                    style="background-image: url('/static/images/image5.png');"></div>
-                    <p>electronics</p>
-    
-                </div>
-    
-                <div>
-                    <div class="bg-div" onclick="window.location.href='/kitchen';"
-                    style="background-image: url('/static/images/kitchen.png');"></div>
-                    <p>kitchen</p>
-    
-                </div>
-                
-                
+                <p>Computers&Accessories</p>
             </div>
-            <h1  style="color: aqua;">Recommended Products</h1>
+
+            <div class="item">
+                <div class="bg-div" onclick="window.location.href='/electronics';"
+                    style="background-image: url('/static/images/image5.png');"></div>
+                <p>electronics</p>
+
+            </div>
+
+            <div>
+                <div class="bg-div" onclick="window.location.href='/kitchen';"
+                    style="background-image: url('/static/images/kitchen.png');"></div>
+                <p>kitchen</p>
+
+            </div>
+
+
+        </div>
+        <h1 style="color: aqua;">Recommended Products</h1>
         <div class="product-container">
             {% for product in products %}
-            <div class="product-card" onclick="window.location.href='/product/{{ product[0] }}'">
-                <img src="{{ product[7] }}" 
-                alt="{{ product[1] }}" 
+            <div class="product-card" onclick="window.location.href='/product/{{ product.product_id }}'">
+                <img src="{{ product.img_link }}" 
+                alt="{{ product.product_name }}" 
                 onerror="this.onerror=null; this.src='static/images/out_of_stock.png'">
     
     
-            <h3>{{ product[1] }}</h3>
-            <p style="color: crimson;">Price: ${{ product[3] }}</p>            
-            <p style="color: goldenrod;">Rating: {{ product[6] }}/5</p>
+            <h3>{{ product.product_name }}</h3>
+            <p style="color: crimson;">Price: ${{ product.discounted_price }}</p>            
+            <p style="color: goldenrod;">Rating: {{ product.rating }}/5</p>
             </div>
             {% endfor %}
         </div>
-    
+
 
     </main>
-    
+
 </body>
-<script>    
+<script>
     async function addToCart(productId, productName, price) {
-    // const csrfToken = "{{ csrf_token() }}"; // Ensure CSRF token is passed
+        // const csrfToken = "{{ csrf_token() }}"; // Ensure CSRF token is passed
 
-    const response = await fetch("/add_to_cart", {
-        method: "POST",
-        headers: { 
-            "Content-Type": "application/json",
-            // "X-CSRFToken": csrfToken  // Include CSRF token in request
-    },
-        
-        body: JSON.stringify({ product_id: productId, product_name: productName, price: price })
-    });
+        const response = await fetch("/add_to_cart", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                // "X-CSRFToken": csrfToken  // Include CSRF token in request
+            },
 
-    const data = await response.json();
-    if (response.ok) {
-        const cartCountElement = document.getElementById("cart-count");
-        if (cartCountElement) {
-            cartCountElement.innerText = data.cart_count;  // Update cart count in navbar
+            body: JSON.stringify({ product_id: productId, product_name: productName, price: price })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            const cartCountElement = document.getElementById("cart-count");
+            if (cartCountElement) {
+                cartCountElement.innerText = data.cart_count;  // Update cart count in navbar
+            }
+            alert("Added to cart!");
+        } else {
+            alert(data.error);
         }
-        alert("Added to cart!");
-    } else {
-        alert(data.error);
     }
-}
 
 </script>
 

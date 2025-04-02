@@ -10,7 +10,7 @@
 <h1>Computers&Accessories</h1>
 
 <!-- Search Bar -->
-<form method="GET" action="{{ url_for('electronics') }}">
+<form method="GET" action="{{ url_for('category.electronics') }}">
     <input type="text" name="search" placeholder="Search electronics..." value="{{ search_query }}">
     <button type="submit">Search</button>
 </form>
@@ -28,7 +28,7 @@
         <button onclick="addToCart(`{{ product['product_id'] }}`, `{{ product['product_name']|e }}`, `{{ product['actual_price'] }}`)">
             Add to Cart
         </button> 
-        <button onclick="window.location.href=`{{ url_for('product_details', product_id=product['product_id']) }}`">
+        <button onclick="window.location.href=`{{ url_for('product.product_details', product_id=product['product_id']) }}`">
             View Product
         </button>       
     </div>
