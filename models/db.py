@@ -2,11 +2,6 @@ import sqlite3
 from config import Config
 import os
 
-# def get_db_connection():
-#     """Create a database connection"""
-#     conn = sqlite3.connect("/mnt/e/CS50/finalProject/my_database.db")
-#     conn.row_factory = sqlite3.Row  # Return rows as dictionaries
-#     return conn
 def get_db_connection():
     """Create a database connection"""
     db_path = "my_database.db"
