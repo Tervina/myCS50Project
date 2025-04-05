@@ -1,11 +1,11 @@
 from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, flash
 # from app.models.user import create_user, get_user_by_username, get_user_by_email, update_password
 from utils.email import send_password_reset_email
-from models.user import create_user, get_user_by_username, get_user_by_email, update_password
+from repository.user import create_user, get_user_by_username, get_user_by_email, update_password
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Blueprint, flash, render_template, session, redirect, url_for
-from models.product import get_random_products
+from repository.product import get_random_products
 from config import Config
 
 auth_bp = Blueprint('auth', __name__)

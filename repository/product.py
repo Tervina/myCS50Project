@@ -1,6 +1,6 @@
 import random
 import requests
-from models.db import get_db_connection
+from repository.db import get_db_connection
 from config import Config
 
 def is_valid_image_url(url):

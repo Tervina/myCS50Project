@@ -1,5 +1,5 @@
 
-from models.db import get_db_connection
+from repository.db import get_db_connection
 
 def create_user(user_name, email, password):
     """Create a new user"""

@@ -1,5 +1,5 @@
 import re
-from models.db import get_db_connection
+from repository.db import get_db_connection
 
 def clean_price(price_str):
     """Clean price string by removing currency symbols and commas"""

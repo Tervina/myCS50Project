@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request
-from models.product import get_products_by_category
+from repository.product import get_products_by_category
 
 category_bp = Blueprint('category', __name__)
 
