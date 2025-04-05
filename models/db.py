@@ -9,7 +9,7 @@ import os
 #     return conn
 def get_db_connection():
     """Create a database connection"""
-    db_path = "/mnt/e/CS50/finalProject/my_database.db"
+    db_path = "my_database.db"
     print(f"DEBUG: Connecting to database at: {os.path.abspath(db_path)}")
     print(f"DEBUG: Database file exists: {os.path.exists(db_path)}")
     try:
