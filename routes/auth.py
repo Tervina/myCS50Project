@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, flash
-# from app.models.user import create_user, get_user_by_username, get_user_by_email, update_password
 from utils.email import send_password_reset_email
 from repository.user import create_user, get_user_by_username, get_user_by_email, update_password
 import sqlite3
@@ -149,28 +148,32 @@ def logout():
     session.pop("user_id", None)
     session.clear()  # ✅ Clear all session data  # Remove user session
     return redirect(url_for("auth.login"))
-
-@auth_bp.route('/forget-pass',methods = ['GET','POST'])
+@auth_bp.route('/forget-pass', methods=['GET', 'POST'])
 def forget():
     if request.method == 'GET':
         return render_template("forget-pass.html")
     try:
-        data = request.json;
-        email= data['email']
-        new_password = data['new_password']
+        print("Request Headers:", request.headers)  # Log request headers
+        print("Request Body:", request.data)  # Log request body
+        
+        data = request.get_json(silent=True)
+        if not data:
+            print("No JSON data found in request.")
+            return jsonify({"error": "Invalid or missing JSON in request"}), 400
+        
+        email = data.get('email', '').strip()
+        new_password = data.get('new_password', '').strip()
 
         if not email or not new_password:
             return jsonify({"error": "Please provide both email and new password"}), 400
-       
+        
         conn = sqlite3.connect("my_database.db")
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM user WHERE email = ?", (email,))
         user = cursor.fetchone()
 
         if not user:
-            return jsonify({"error": "Email not found"}), 404  # No user with that email
-
-        # hashed_password = generate_password_hash(new_password)  # Hash the new password
+            return jsonify({"error": "Email not found"}), 404
 
         cursor.execute("UPDATE user SET password = ? WHERE email = ?", (new_password, email))
 
@@ -178,9 +181,10 @@ def forget():
         conn.close()
 
         if cursor.rowcount == 0:
-                return jsonify({"error": "Email not found"}), 404  # No user with that email
+            return jsonify({"error": "Email not found"}), 404
         
         return jsonify({"message": "Password updated successfully!"}), 200
 
     except Exception as e:
+        print("❌ Exception occurred:", str(e))
         return jsonify({"error": str(e)}), 400

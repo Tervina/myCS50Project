@@ -25,10 +25,10 @@ Session(app)
 app.register_blueprint(auth_bp)
 app.register_blueprint(product_bp)
 app.register_blueprint(cart_bp)
-# app.register_blueprint(cart_bp, url_prefix='/cart')
 app.register_blueprint(checkout_bp)
-# app.register_blueprint(main_bp)
 app.register_blueprint(category_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+app.config['JSON_AS_ASCII'] = False
