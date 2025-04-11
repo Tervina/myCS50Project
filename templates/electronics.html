@@ -3,7 +3,6 @@
 {% block title %}Electronics{% endblock %}
 
 {% block head %}
-<meta name="csrf-token" content="{{ csrf_token() }}"> {# For JS Fetch to access CSRF token #}
 {% endblock %}
 
 {% block content %}
@@ -39,7 +38,6 @@
 {% block scripts %}
 <script>
 async function addToCart(productId, productName, price) {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     const quantity = 1;  // Default to 1 since no quantity input field exists
     // const numericPrice = parseFloat(price) || 0;  // Ensure valid number
@@ -55,7 +53,6 @@ async function addToCart(productId, productName, price) {
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "X-CSRFToken": csrfToken
             },
             body: JSON.stringify(productData)
         });

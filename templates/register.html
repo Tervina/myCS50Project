@@ -1,114 +1,109 @@
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="static/register.css">
 </head>
-<body style="background-color: #071e26;justify-content: center;align-items: center;display: flex; margin: 0px;height: 100vh;">
+
+<body
+    style="background-color: #071e26;justify-content: center;align-items: center;display: flex; margin: 0px;height: 100vh;">
     <div>
-       <form id="registerForm">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-           <p style="color: beige;font-size: 50px;font-weight: bold;margin: 0;">Register</p>
-
-           <input type="text" id="user_name" name="user_name"  placeholder="User Name"><br><br>  
-
-           <input type="text" id="age" name="age"  placeholder="Age"><br><br>  
-
-           <input type="text" id="address" name="address"  placeholder="Your Address"><br><br>  
+        <form id="registerForm">
 
 
-           <input type="email" id="email" name="email"  placeholder="Email"><br><br>
-           
-           <input type="password" id="password" name="password"  placeholder="Password"><br><br>
-           
-           <button type="submit">Submit</button>
-           
-   
-       </form>
-       <p id="responseMessage"></p>
+            <p style="color: beige;font-size: 50px;font-weight: bold;margin: 0;">Register</p>
 
-    </div>   
-   </body>
-   <!-- <script>
-    document.getElementById("registerForm").addEventListener("submit",async function(event){
-        event.preventDefault(); //prvent form refresh
+            <input type="text" id="user_name" name="user_name" placeholder="User Name"><br><br>
 
-        // Get form values
-            // const user_name = document.getElementById("user_name").value;
-            // const email = document.getElementById("email").value;
-            // const password = document.getElementById("password").value;
-            const user_name = document.getElementById("user_name").value;
-            const age = document.getElementById("age").value;
-            const address = document.getElementById("address").value;
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
+            <input type="text" id="age" name="age" placeholder="Age"><br><br>
 
+            <input type="text" id="address" name="address" placeholder="Your Address"><br><br>
+
+
+            <input type="email" id="email" name="email" placeholder="Email"><br><br>
+
+            <input type="password" id="password" name="password" placeholder="Password"><br><br>
+
+            <button type="submit">Submit</button>
+
+
+        </form>
+        <p id="responseMessage"></p>
+
+    </div>
+</body>
+<script>
+    document.getElementById("registerForm").addEventListener("submit", async function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const user_name = document.getElementById("user_name").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
         try {
-        const response = await fetch("http://127.0.0.1:5000/register", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ user_name, email, password }) // Send only necessary fields
-        });
+            const response = await fetch("/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
 
-        const data = await response.json();
-        if(response.ok)
-        {
-            window.location.href = "/login";  // Redirect to the Flask route, not a file path
-        }
-        else
-        {
-            document.getElementById("responseMessage").innerText = data.message || data.error;
-            button.disabled = false; // Re-enable button on error
-        }
-        
-    } catch (error) {
-        console.error("Error:", error);
-        document.getElementById("responseMessage").innerText = "An error occurred. Please try again.";
-        button.disabled = false; // Re-enable button on error
-    }
-      
-    });
-   </script> -->
-   <script>
-    document.getElementById("registerForm").addEventListener("submit", async function(event) {
-    event.preventDefault(); // Prevent default form submission
+                },
+                body: JSON.stringify({
+                    user_name: user_name,
+                    email: email,
+                    password: password
+                })
+            });
 
-    const user_name = document.getElementById("user_name").value;
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const csrf_token = document.querySelector("input[name='csrf_token']").value;  // Get CSRF token
+            // First handle response status
+            if (!response.ok) {
+                // Better error message for non-200 responses
+                document.getElementById("responseMessage").innerText = `Server error: ${response.status} ${response.statusText}`;
 
-    try {
-        const response = await fetch("/register", {  // Use relative URL
+                // Still try to parse as JSON if possible
+                try {
+                    const errorData = await response.json();
+                    document.getElementById("responseMessage").innerText += ` - ${errorData.error || "Unknown error"}`;
+                } catch (jsonError) {
+                    console.error("Could not parse error as JSON:", jsonError);
+                }
+                return;
+            }
+
+            // For successful responses, parse JSON
+            const data = await response.json();
+            document.getElementById("responseMessage").innerText = data.message || "Registration successful!";
+            setTimeout(() => window.location.href = "/login", 1000);
+        } // Replace your existing catch block with this
+catch (error) {
+    console.error("Error:", error);
+    
+    // Try to get the actual response content
+    if (error.message.includes("not valid JSON")) {
+        // Fetch the URL again to see the actual response
+        fetch("/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrf_token  // ✅ Include CSRF Token
             },
-            body: JSON.stringify({ user_name, email, password })  
+            body: JSON.stringify({
+                user_name: document.getElementById("user_name").value,
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value
+            })
+        })
+        .then(response => response.text())  // Get text instead of JSON
+        .then(text => {
+            console.log("Actual server response:", text);
+            document.getElementById("responseMessage").innerText = "Error: Server returned HTML instead of JSON. See console for details.";
         });
-
-        // Check if response is JSON before parsing
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-            throw new Error("Server did not return JSON. Possible error page.");
-        }
-
-        const data = await response.json();
-        if (response.ok) {
-            window.location.href = "/login";  
-        } else {
-            document.getElementById("responseMessage").innerText = data.error || "Error occurred";
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        document.getElementById("responseMessage").innerText = "An error occurred. Please try again.";
+    } else {
+        document.getElementById("responseMessage").innerText = "An error occurred: " + error.message;
     }
-});
+}
+    })
 
-   </script>
+</script>
+
 </html>

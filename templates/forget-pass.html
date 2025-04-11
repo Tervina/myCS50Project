@@ -11,7 +11,6 @@
     <h1>Enter your email to reset your password.</h1>
 
     <form id="forgotPasswordForm">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
         <label for="password">New Password:</label>
@@ -25,7 +24,6 @@
         event.preventDefault();
         const email = document.getElementById("email").value;
         const new_password = document.getElementById("new_password").value;
-        const csrf_token = document.querySelector("input[name='csrf_token']").value;  // Get CSRF token
 
 
         try {
@@ -33,7 +31,6 @@
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "X-CSRFToken": csrf_token,// ✅ This is the key 
                 },
 
 

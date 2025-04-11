@@ -7,3 +7,4 @@ class Config:
     WTF_CSRF_ENABLED = True
     SESSION_COOKIE_SECURE = False  # Set to True in production
     PLACEHOLDER_IMAGE = "/static/images/out_of_stock.png"
+    

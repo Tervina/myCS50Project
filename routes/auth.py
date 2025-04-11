@@ -6,13 +6,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Blueprint, flash, render_template, session, redirect, url_for
 from repository.product import get_random_products
 from config import Config
+# from flask_wtf.csrf import csrf_exempt  # Import the decorator directly
+from flask_wtf.csrf import validate_csrf
+from wtforms.csrf.core import ValidationError
 
 auth_bp = Blueprint('auth', __name__)
 
-# @auth_bp.route('/home')
-# def home():
-#     # Render the home page or whatever content you want to display
-#     return render_template('home.html')
 
 @auth_bp.route('/home')
 def home():
@@ -52,44 +51,98 @@ def index():
     
     return redirect(url_for("auth.login"))
 
+
+# @auth_bp.route('/register', methods=['GET', 'POST'])
+# def register():
+#     if request.method == 'GET':
+#         return render_template("register.html")
+
+#     try:
+#         print("Headers:", request.headers)  
+#         print("Raw Data Received:", request.data)  
+
+#         # More explicit check for JSON content type
+#         if not request.is_json:
+#             print("Request is not JSON")
+#             return jsonify({"error": "Request must be JSON"}), 400
+
+#         data = request.get_json()
+#         print("Parsed data:", data)  # Add this log
+        
+#         if not data:
+#             return jsonify({"error": "Invalid or missing JSON data"}), 400
+
+#         user_name = data.get('user_name')
+#         email = data.get('email')
+#         password = data.get('password')
+
+#         print(f"Processing: {user_name}, {email}, {password[:2]}***")  # Log processing
+
+#         if not user_name or not email or not password:
+#             return jsonify({"error": "Missing required fields"}), 400
+
+#         conn = sqlite3.connect("my_database.db")
+#         cursor = conn.cursor()
+#         cursor.execute("INSERT INTO user (user_name, email, password) VALUES (?, ?, ?)",
+#                       (user_name, email, password))
+#         conn.commit()
+#         conn.close()
+
+#         print("User registered successfully")
+#         return jsonify({"message": "User registered successfully!"}), 201
+
+#     except Exception as e:
+#         print(f"Exception: {str(e)}")
+#         return jsonify({"error": str(e)}), 400
+
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
         return render_template("register.html")
 
     try:
-        print("Headers:", request.headers)  
-        print("Raw Data Received:", request.data)  # Debugging  
+        print("Headers:", request.headers)
+        print("Raw Data Received:", request.data)
 
         if not request.is_json:
+            print("Request is not JSON")
             return jsonify({"error": "Request must be JSON"}), 400
 
         data = request.get_json()
+        print("Parsed data:", data)
+
         if not data:
             return jsonify({"error": "Invalid or missing JSON data"}), 400
 
         user_name = data.get('user_name')
-        # age = data.get('age', '')  # Default to empty if not provided
-        # address = data.get('address', '')  
         email = data.get('email')
         password = data.get('password')
+
+        print(f"Processing: {user_name}, {email}, {password[:2]}***")
 
         if not user_name or not email or not password:
             return jsonify({"error": "Missing required fields"}), 400
 
-        conn = sqlite3.connect("my_database.db")
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO user (user_name, email, password) VALUES (?, ?, ?)",
-                       (user_name,email, password))
-        conn.commit()
-        conn.close()
+        # Use context manager with timeout to avoid locking issues
+        with sqlite3.connect("my_database.db", timeout=10) as conn:
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO user (user_name, email, password) VALUES (?, ?, ?)",
+                           (user_name, email, password))
+            conn.commit()
 
+        print("User registered successfully")
         return jsonify({"message": "User registered successfully!"}), 201
 
+    except sqlite3.OperationalError as e:
+        if "locked" in str(e):
+            print("⚠️ Database is locked, try again later.")
+            return jsonify({"error": "Database is busy, please try again shortly."}), 503
+        print(f"Database error: {e}")
+        return jsonify({"error": "Database error"}), 500
     except Exception as e:
+        print(f"Exception: {str(e)}")
         return jsonify({"error": str(e)}), 400
-
-
+    
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if "user" in session:  # Check if user is already logged in
@@ -99,6 +152,7 @@ def login():
         return render_template("login.html")  # Serve login page
 
     try:
+    
         data = request.json
         user_name = data.get("user_name")
         password = data.get("password")
@@ -141,7 +195,6 @@ def login():
     except Exception as e:
         print("Login error:", str(e))  # Debugging: Print error
         return jsonify({"error": str(e)}), 500
-
 
 @auth_bp.route('/logout')
 def logout():

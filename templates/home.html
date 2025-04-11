@@ -82,13 +82,11 @@
 </body>
 <script>
     async function addToCart(productId, productName, price) {
-        // const csrfToken = "{{ csrf_token() }}"; // Ensure CSRF token is passed
 
         const response = await fetch("/add_to_cart", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                // "X-CSRFToken": csrfToken  // Include CSRF token in request
             },
 
             body: JSON.stringify({ product_id: productId, product_name: productName, price: price })

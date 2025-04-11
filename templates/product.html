@@ -2,19 +2,15 @@
 
 {% block title %}{{ product[1] }}{% endblock %}
 
-{% block head %}
-<meta name="csrf-token" content="{{ csrf_token() }}">  {# For JS Fetch to access CSRF token #}
-{% endblock %}
+
 
 {% block content %}
 <h1 style="color: beige;">{{ product[1] }}</h1>
 <br>
 
 <img src="{{ product[7] }}" alt="{{ product[1] }}" onerror="this.onerror=null; this.src='static/images/out_of_stock.png'">
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 <!-- FORM fallback for non-JS users -->
 <form id="add-to-cart-form" method="POST" action="/add_to_cart"style="display: inline;">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="product_id" value="{{ product[0] }}">
     <input type="hidden" name="product_name" value="{{ product[1] }}">
     <input type="hidden" name="price" value="{{ product[3] }}">
@@ -30,11 +26,6 @@
     Add to Cart
 </button> 
 
-<!-- <form action="/checkout" method="GET" style="display: inline;">
-    <button type="submit" style="background-color: blue; color: white; padding: 15px 30px; border: none; cursor: pointer; font-size: 25px;">
-        Checkout
-    </button>
-</form> -->
 
 <p style="color: beige;">Category: {{ product[2] }}</p>
 <p style="color: goldenrod;">Price: {{ product[3] }}</p>
@@ -49,7 +40,6 @@
 {% block scripts %}
 <script>
 async function addToCart(productId, productName, price) {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const quantityInput = document.querySelector('#quantity-input');  // Get quantity input field
     const quantity = parseInt(quantityInput.value) || 1;  // Get value, fallback to 1 if empty
     const numericPrice = parseFloat(price.replace(/[^\d.]/g, ""));  // Clean price
@@ -69,7 +59,6 @@ async function addToCart(productId, productName, price) {
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "X-CSRFToken": csrfToken
             },
             body: JSON.stringify(productData)
         });

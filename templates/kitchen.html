@@ -3,7 +3,6 @@
 {% block title %}Electronics{% endblock %}
 
 {% block head %}
-<meta name="csrf-token" content="{{ csrf_token() }}"> {# For JS Fetch to access CSRF token #}
 {% endblock %}
 
 {% block content %}
@@ -17,62 +16,106 @@
 <div class="products">
     {% for product in products %}
     <div class="product">
-        <img src="{{ product['img_link'] }}" alt="{{ product['product_name'] }}" onerror="this.onerror=null; this.src='static/images/out_of_stock.png'">
+        <img src="{{ product['img_link'] }}" alt="{{ product['product_name'] }}"
+            onerror="this.onerror=null; this.src='static/images/out_of_stock.png'">
         <h3>{{ product['product_name'] }}</h3>
         <p>Price: {{ product['actual_price'] }}</p>
-       
+
         <!-- <button onclick="window.location.href='/product/{{ product['product_id'] }}'">View Product</button> -->
 
 
-        
-        <button onclick="addToCart(`{{ product['product_id'] }}`, `{{ product['product_name']|e }}`, `{{ product['actual_price'] }}`)">
+
+        <button
+            onclick="addToCart(`{{ product['product_id'] }}`, `{{ product['product_name']|e }}`, `{{ product['actual_price'] }}`)">
             Add to Cart
-        </button> 
-        <button onclick="window.location.href=`{{ url_for('product.product_details', product_id=product['product_id']) }}`">
+        </button>
+        <button
+            onclick="window.location.href=`{{ url_for('product.product_details', product_id=product['product_id']) }}`">
             View Product
-        </button>       
+        </button>
     </div>
     {% endfor %}
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script>
-async function addToCart(productId, productName, price) {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+<!-- <script>
+    async function addToCart(productId, productName, price) {
 
-    const quantity = 1;  // Default to 1 since no quantity input field exists
-    // const numericPrice = parseFloat(price) || 0;  // Ensure valid number
-    const numericPrice = parseFloat(price.replace(/[^\d.]/g, ""));  // Clean price
+        const quantity = 1;  // Default to 1 since no quantity input field exists
+        // const numericPrice = parseFloat(price) || 0;  // Ensure valid number
+        
 
-    const productData = { product_id: productId, product_name: productName, price: numericPrice, quantity };
+        const numericPrice = parseFloat(price.replace(/[^\d.]/g, ""));  // Clean price
 
-    console.log("📤 Sending JSON Data:", JSON.stringify(productData));
+        const productData = { product_id: productId, product_name: productName, price: numericPrice, quantity };
 
-    try {
-        const response = await fetch("/add_to_cart", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-CSRFToken": csrfToken
-            },
-            body: JSON.stringify(productData)
-        });
+        console.log("📤 Sending JSON Data:", JSON.stringify(productData));
 
-        const responseData = await response.json();
-        console.log("📥 Parsed Response Data:", responseData);
+        try {
+            const response = await fetch("/add_to_cart", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+                body: JSON.stringify(productData)
+            });
 
-        if (response.ok) {
-            alert("✅ Added to cart successfully!");
-            window.location.href = "/cart";  // Redirect to cart page
-        } else {
-            alert("❌ Error: " + responseData.error);
+            const responseData = await response.json();
+            console.log("📥 Parsed Response Data:", responseData);
+
+            if (response.ok) {
+                alert("✅ Added to cart successfully!");
+                window.location.href = "/cart";  // Redirect to cart page
+            } else {
+                alert("❌ Error: " + responseData.error);
+            }
+        } catch (error) {
+            console.error("🚨 Fetch Error:", error);
+            alert("Something went wrong. Check the console.");
         }
-    } catch (error) {
-        console.error("🚨 Fetch Error:", error);
-        alert("Something went wrong. Check the console.");
     }
-}
+</script> -->
+<script>
+    async function addToCart(productId, productName, price) {
+        const quantity = 1;
+        const numericPrice = parseFloat(price.replace(/[^\d.]/g, ""));
+
+        const productData = {
+            product_id: productId,
+            product_name: productName,
+            price: numericPrice,
+            quantity
+        };
+
+        console.log("📤 Sending JSON Data:", JSON.stringify(productData));
+
+        try {
+            const response = await fetch("/add_to_cart", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(productData)
+            });
+
+            const responseData = await response.json();
+            console.log("📥 Response:", responseData);
+
+            if (response.ok) {
+                alert("✅ Added to cart successfully!");
+                window.location.href = "/cart";
+            } else {
+                alert("❌ Error: " + responseData.error);
+            }
+        } catch (error) {
+            console.error("🚨 Fetch Error:", error);
+            alert("Something went wrong. Check console.");
+        }
+    }
 </script>
+
+
 {% endblock %}
